@@ -162,6 +162,96 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/03/04/CVE-2021-21972%20GO%E8%AF%AD%E8%A8%80%E7%BC%96%E5%86%99POC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Zain">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zain">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/04/CVE-2021-21972%20GO%E8%AF%AD%E8%A8%80%E7%BC%96%E5%86%99POC/" class="post-title-link" itemprop="url">Golang POC编写 CVE-2021-21972(Vmware vcenter漏洞)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-03-04 14:29:59 / Modified: 14:44:44" itemprop="dateCreated datePublished" datetime="2021-03-04T14:29:59+08:00">2021-03-04</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/03/04/CVE-2021-21972%20GO%E8%AF%AD%E8%A8%80%E7%BC%96%E5%86%99POC/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/03/04/CVE-2021-21972%20GO%E8%AF%AD%E8%A8%80%E7%BC%96%E5%86%99POC/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这周新爆的漏洞，写了个POC练练手，遇到很多问题，记录一下，有啥地方有问题或者可以优化希望能指出，感谢！</p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/company-information/264233.html">漏洞分析传送门</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/04/CVE-2021-21972%20GO%E8%AF%AD%E8%A8%80%E7%BC%96%E5%86%99POC/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/03/02/CobalStrike%20%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -343,95 +433,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Zain">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Zain">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/" class="post-title-link" itemprop="url">Golang进行http请求（一）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-              
-
-              <time title="Created: 2021-02-03 16:21:14 / Modified: 16:26:15" itemprop="dateCreated datePublished" datetime="2021-02-03T16:21:14+08:00">2021-02-03</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine: </span>
-    
-    <a title="valine" href="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>golang做爬虫已经很常见了，在日常的中也存在使用golang写EXP的应用场景，这篇文章粗略的写了下Golang实现各种请求的方法。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%BA%8C%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -498,6 +499,95 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%BA%8C%EF%BC%89/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Zain">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zain">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/" class="post-title-link" itemprop="url">Golang进行http请求（一）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-02-03 16:21:14 / Modified: 16:26:15" itemprop="dateCreated datePublished" datetime="2021-02-03T16:21:14+08:00">2021-02-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>golang做爬虫已经很常见了，在日常的中也存在使用golang写EXP的应用场景，这篇文章粗略的写了下Golang实现各种请求的方法。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/02/03/Golang%E8%BF%9B%E8%A1%8Chttp%E8%AF%B7%E6%B1%82%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -864,7 +954,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
