@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/icon32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/icon16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"byzain.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言老板提出需求说要批量检查URL，高亮其中的敏感字并保存截图，于是我不眠不休加班加点的赶出了v1.0版本，当然也踩好多坑，在此记录一下，v1.0是单线程版。 v2.0是针对excel格式的并发版，抓取第三列的所有链接，图片的保存名称是第一列的序号，方便对照查找，高并发对性能有要求，正常开20-40就够了。 点这里下载">
+<meta property="og:type" content="article">
+<meta property="og:title" content="golang实现批量网页关键字高亮截图">
+<meta property="og:url" content="https://byzain.github.io/2021/03/12/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/index.html">
+<meta property="og:site_name" content="Zain">
+<meta property="og:description" content="前言老板提出需求说要批量检查URL，高亮其中的敏感字并保存截图，于是我不眠不休加班加点的赶出了v1.0版本，当然也踩好多坑，在此记录一下，v1.0是单线程版。 v2.0是针对excel格式的并发版，抓取第三列的所有链接，图片的保存名称是第一列的序号，方便对照查找，高并发对性能有要求，正常开20-40就够了。 点这里下载">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://byzain.github.io/images/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/1de88cf65aa9c5a0cf674f45462ce939.png">
+<meta property="og:image" content="https://byzain.github.io/images/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/87c3ae861a1b43fd82177fdea5bf22a8.png">
+<meta property="article:published_time" content="2021-03-12T01:33:20.000Z">
+<meta property="article:modified_time" content="2021-03-19T03:23:10.333Z">
+<meta property="article:author" content="Zain">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://byzain.github.io/images/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/1de88cf65aa9c5a0cf674f45462ce939.png">
+
+<link rel="canonical" href="https://byzain.github.io/2021/03/12/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>golang实现批量网页关键字高亮截图 | Zain</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+
+   <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 1; pointer-events: none;" ></canvas> 
+   <script type="text/javascript" src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script> 
+   <script type="text/javascript" src="/js/src/fireworks.js"></script>
+
+
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Zain</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">别认输 因为没人希望你赢</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/2021/03/12/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Zain">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zain">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          golang实现批量网页关键字高亮截图
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-12 09:33:20" itemprop="dateCreated datePublished" datetime="2021-03-12T09:33:20+08:00">2021-03-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-03-19 11:23:10" itemprop="dateModified" datetime="2021-03-19T11:23:10+08:00">2021-03-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Golang/" itemprop="url" rel="index"><span itemprop="name">Golang</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/03/12/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/03/12/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>老板提出需求说要批量检查URL，高亮其中的敏感字并保存截图，于是我不眠不休加班加点的赶出了v1.0版本，当然也踩好多坑，在此记录一下，v1.0是单线程版。</p>
+<p>v2.0是针对excel格式的并发版，抓取第三列的所有链接，图片的保存名称是第一列的序号，方便对照查找，高并发对性能有要求，正常开20-40就够了。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/ByZain/Webpage_screenshot/releases/">点这里下载</a></p>
+<a id="more"></a>
+
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>单线程版本源码分了两个文件，后期便于维护，无法直接<code>go run</code>运行，需要<code>go build</code>生成二进制文件，然后双击运行二进制文件即可，如果担心错过详细的输出信息，可以在命令行中运行，关于关键字高亮的实现方式是使用Chromedp包内嵌JS执行。</p>
+<h3 id="有关源码"><a href="#有关源码" class="headerlink" title="有关源码"></a>有关源码</h3><p>源码分了两个包，一个是主包main.go，另外一个targetFile.go负责对读取目标文件并进行正则匹配以及格式转换，最终返回一个格式正确无重复记录的文件句柄，targetFile包中的所有函数都被RegexpHTTP函数调用，可以理解成一个整体，为后继的并发版本体提供了良好的开发基础。</p>
+<h3 id="使用说明"><a href="#使用说明" class="headerlink" title="使用说明"></a>使用说明</h3><ul>
+<li>运行程序</li>
+<li>输入需要过滤的敏感词，如果有多个词组，每个词组之间使用竖线<code>|</code>分隔</li>
+<li>设置页面加载时长，假设页面默认等待加载时长设定为5秒，由于需要手机端截图+PC端截图，执行程序时每个URL就是10秒</li>
+<li>拖拽存放大量需要检测的url文件到其中，需要txt格式。如果您是excel文件，打开excel文件按下<code>ctrl+a</code>组合键全选后复制粘贴到一个txt文件中即可放入自动检测筛选url</li>
+<li>txt中每个超链接之间需要被分隔，分隔符可以是空格或者换行，其他无要求，以便于程序自动搜索匹配超链接</li>
+<li>程序还会将匹配到的超链接保存在原链接文件的相同路径下，重命名为<code>***筛选去重.txt</code></li>
+<li>程序会逐条访问<code>***筛选去重.txt</code>中的链接并高亮关键字后截图保存，截图保存在本程序同级目录下的当天日期的文件夹内</li>
+<li>同时存在两个文件夹，一个存放pc端截图，另一个存放手机端截图</li>
+<li>对于无法访问的目标同样会在程序相同路径下创建文件存放无法访问的url，文件名为<code>errorHTTP.txt</code></li>
+</ul>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><h3 id="main-go"><a href="#main-go" class="headerlink" title="main.go"></a>main.go</h3><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;path/filepath&quot;</span></span><br><span class="line">	<span class="string">&quot;regexp&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/chromedp/chromedp&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/chromedp/chromedp/device&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> emulateChoose <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> de <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line"><span class="comment">// KeyWords 存放关键字列表</span></span><br><span class="line"><span class="keyword">var</span> KeyWords []<span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">screen</span><span class="params">(targetURL, imgName, KeyWords, PCfolderName, PhonefolderName <span class="keyword">string</span>, sleepTime <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;开始抓取关键字......&quot;</span>)</span><br><span class="line">	<span class="comment">// create context</span></span><br><span class="line">	ctx, cancel := chromedp.NewContext(context.Background())</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// run</span></span><br><span class="line">	<span class="keyword">var</span> res <span class="keyword">string</span></span><br><span class="line">	<span class="keyword">var</span> b1, b2 []<span class="keyword">byte</span></span><br><span class="line">	<span class="keyword">var</span> highLight <span class="keyword">string</span> = <span class="string">`var ele = document.getElementsByTagName(&quot;body&quot;)[0];</span></span><br><span class="line"><span class="string">	var keys = &quot;`</span> + KeyWords + <span class="string">`&quot;;</span></span><br><span class="line"><span class="string">	var reg = new RegExp(&quot;(&quot; + keys.replace(/,/, &quot;|&quot;) + &quot;)&quot;, &quot;g&quot;);</span></span><br><span class="line"><span class="string">	ele.innerHTML = ele.innerHTML.replace(reg, &quot;&lt;span style=&#x27;background:red;&#x27;&gt;&lt;font color=&#x27;#fff&#x27;&gt;$1&lt;/font&gt;&lt;/span&gt;&quot;);`</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`)</span></span><br><span class="line"></span><br><span class="line">	err := chromedp.Run(ctx,</span><br><span class="line">		<span class="comment">// emulate iPhone 7 landscape</span></span><br><span class="line">		chromedp.Emulate(device.IPad),</span><br><span class="line">		chromedp.Navigate(targetURL),</span><br><span class="line">		chromedp.Sleep(time.Second*time.Duration(sleepTime)),</span><br><span class="line">		chromedp.EvaluateAsDevTools(highLight, &amp;res),</span><br><span class="line">		chromedp.CaptureScreenshot(&amp;b1),</span><br><span class="line"></span><br><span class="line">		<span class="comment">// reset</span></span><br><span class="line">		chromedp.Emulate(device.Reset),</span><br><span class="line"></span><br><span class="line">		<span class="comment">// set really large viewport</span></span><br><span class="line"></span><br><span class="line">		chromedp.EmulateViewport(<span class="number">1920</span>, <span class="number">2000</span>),</span><br><span class="line">		chromedp.Navigate(targetURL),</span><br><span class="line">		chromedp.Sleep(time.Second*time.Duration(sleepTime)),</span><br><span class="line">		chromedp.EvaluateAsDevTools(highLight, &amp;res),</span><br><span class="line">		chromedp.CaptureScreenshot(&amp;b2),</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		errorHTTPHandle, _ := os.OpenFile(<span class="string">&quot;errorHTTP.txt&quot;</span>, os.O_CREATE|os.O_APPEND|os.O_RDWR, <span class="number">0755</span>)</span><br><span class="line">		io.WriteString(errorHTTPHandle, targetURL)</span><br><span class="line">		fmt.Println(targetURL + <span class="string">&quot;抓取失败！该地址保存在本程序同级目录下！&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	getwd, _ := os.Getwd()</span><br><span class="line">	filepath.Join(getwd, PCfolderName)</span><br><span class="line">	filepath.Join(getwd, PhonefolderName)</span><br><span class="line">	<span class="keyword">if</span> err := ioutil.WriteFile(PhonefolderName+<span class="string">&quot;/&quot;</span>+imgName+<span class="string">&quot;_Phone.png&quot;</span>, b1, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := ioutil.WriteFile(PCfolderName+<span class="string">&quot;/&quot;</span>+imgName+<span class="string">&quot;_PC.png&quot;</span>, b2, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">imageName</span><span class="params">(URLString <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	matchString := <span class="string">`[:\/\.\?+=]+`</span></span><br><span class="line">	re := regexp.MustCompile(matchString)</span><br><span class="line">	imageName := re.ReplaceAllString(URLString, <span class="string">&quot;&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> imageName</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeFolder</span><span class="params">()</span> <span class="params">(<span class="keyword">string</span>, <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	PCfolderName := time.Now().Format(<span class="string">&quot;20060102&quot;</span>) + <span class="string">&quot;_PC&quot;</span></span><br><span class="line">	PhonefolderName := time.Now().Format(<span class="string">&quot;20060102&quot;</span>) + <span class="string">&quot;_Phone&quot;</span></span><br><span class="line">	_, err := os.Stat(PCfolderName)</span><br><span class="line">	<span class="keyword">if</span> os.IsNotExist(err) &#123;</span><br><span class="line">		err := os.Mkdir(PCfolderName, <span class="number">0755</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	_, err = os.Stat(PhonefolderName)</span><br><span class="line">	<span class="keyword">if</span> os.IsNotExist(err) &#123;</span><br><span class="line">		err := os.Mkdir(PhonefolderName, <span class="number">0755</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> PCfolderName, PhonefolderName</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> KeyWords <span class="keyword">string</span></span><br><span class="line">	<span class="keyword">var</span> sleepTime <span class="keyword">int</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;请输入要高亮的关键字(多个关键字用英文逗号分隔)：&quot;</span>)</span><br><span class="line">	fmt.Scanln(&amp;KeyWords)</span><br><span class="line">	fmt.Println(<span class="string">&quot;请设置网页等待时间：&quot;</span>)</span><br><span class="line">	fmt.Scanln(&amp;sleepTime)</span><br><span class="line">	targetFileHandle := RegexpHTTP()</span><br><span class="line">	<span class="keyword">defer</span> targetFileHandle.Close()</span><br><span class="line">	targetContentByte, _ := ioutil.ReadAll(&amp;targetFileHandle)</span><br><span class="line">	<span class="comment">// fmt.Println(string(targetContentByte))</span></span><br><span class="line">	targetContent := <span class="keyword">string</span>(targetContentByte)</span><br><span class="line">	targetSlice := strings.Split(targetContent, <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">	PCfolderName, PhonefolderName := makeFolder()</span><br><span class="line">	<span class="keyword">for</span> _, content := <span class="keyword">range</span> targetSlice &#123;</span><br><span class="line">		<span class="keyword">if</span> content != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">			imgName := imageName(content)</span><br><span class="line">			<span class="comment">//fmt.Println(imgName)</span></span><br><span class="line">			screen(content, imgName, KeyWords, PCfolderName, PhonefolderName, sleepTime)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;抓取结束！截图保存在此程序同级目录下&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="targetFile-go"><a href="#targetFile-go" class="headerlink" title="targetFile.go"></a>targetFile.go</h3><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;regexp&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// RegexpHTTP 本地文件中过滤指定内容</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RegexpHTTP</span><span class="params">()</span> <span class="title">os</span>.<span class="title">File</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> rFile <span class="keyword">string</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;输入文件路径或将目标文件拖入后回车确认(文件名中不能存在空格)：&quot;</span>)</span><br><span class="line">	fmt.Scanln(&amp;rFile)</span><br><span class="line">	fmt.Println(<span class="string">&quot;开始对目标文件筛选！&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 匹配文件中http或https开头的url</span></span><br><span class="line">	fileHandle, err := os.Open(rFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> fileHandle.Close()</span><br><span class="line">	targetContentByte, err := ioutil.ReadAll(fileHandle)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err != io.EOF &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	stringTargetContent := <span class="keyword">string</span>(targetContentByte)</span><br><span class="line">	matchURL := <span class="string">`http[s]?:\/\/[^\n\t\r\f\s&#x27;&quot;]+`</span></span><br><span class="line">	reMatchURL := regexp.MustCompile(matchURL)</span><br><span class="line">	targetSlice := reMatchURL.FindAllString(stringTargetContent, <span class="number">-1</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;开始对筛选结果去重！&quot;</span>)</span><br><span class="line">	resultTargetSlice := RemoveReplicaSliceString(targetSlice)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(resultTargetSlice) == <span class="number">0</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;未检测到HTTP(S)关键字，请检查文件是否正确！&quot;</span>)</span><br><span class="line">		os.Exit(<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fileName := wFile(rFile, resultTargetSlice)</span><br><span class="line">	targetFileHandle, _ := os.Open(fileName)</span><br><span class="line">	<span class="keyword">return</span> *targetFileHandle</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RemoveReplicaSliceString 用于string类型slice去重</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RemoveReplicaSliceString</span><span class="params">(slc []<span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">	result := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>)</span><br><span class="line">	tempMap := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">bool</span>, <span class="built_in">len</span>(slc))</span><br><span class="line">	<span class="keyword">for</span> _, e := <span class="keyword">range</span> slc &#123;</span><br><span class="line">		<span class="keyword">if</span> tempMap[e] != <span class="literal">true</span> &#123;</span><br><span class="line">			tempMap[e] = <span class="literal">true</span></span><br><span class="line">			result = <span class="built_in">append</span>(result, e)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// wFile 保存文件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">wFile</span><span class="params">(rFile <span class="keyword">string</span>, data []<span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="comment">// 正则匹配并重命名文件名，用以保存漏洞地址</span></span><br><span class="line">	matchFilename := <span class="string">`[^\.\n\t\r\f]+`</span></span><br><span class="line">	reMatchFilename := regexp.MustCompile(matchFilename)</span><br><span class="line">	wrFilenameSlice := reMatchFilename.FindAllString(rFile, <span class="number">1</span>)</span><br><span class="line">	wFile := wrFilenameSlice[<span class="number">0</span>] + <span class="string">&quot;筛选去重.txt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 读写、创建、清空重写</span></span><br><span class="line">	fileHandle, _ := os.OpenFile(wFile, os.O_CREATE|os.O_RDWR|os.O_TRUNC, <span class="number">0755</span>)</span><br><span class="line">	<span class="keyword">defer</span> fileHandle.Close()</span><br><span class="line">	<span class="keyword">for</span> _, i := <span class="keyword">range</span> data &#123;</span><br><span class="line">		fileHandle.WriteString(i + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;筛选去重后文件保存在：&quot;</span> + wFile)</span><br><span class="line">	<span class="keyword">return</span> wFile</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="固定EXCEL格式的并发源码"><a href="#固定EXCEL格式的并发源码" class="headerlink" title="固定EXCEL格式的并发源码"></a>固定EXCEL格式的并发源码</h3><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;path/filepath&quot;</span></span><br><span class="line">	<span class="string">&quot;regexp&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/Luxurioust/excelize&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/chromedp/chromedp&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/chromedp/chromedp/device&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> emulateChoose <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> de <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"><span class="keyword">var</span> mu sync.Mutex</span><br><span class="line"><span class="keyword">var</span> fileName <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// PCfolderName 为文件夹名称，保存pc端截图</span></span><br><span class="line"><span class="keyword">var</span> PCfolderName <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// PhonefolderName 为文件夹名称，保存手机端截图</span></span><br><span class="line"><span class="keyword">var</span> PhonefolderName <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> targetChan <span class="keyword">chan</span> <span class="keyword">string</span> = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">var</span> imgNameChan <span class="keyword">chan</span> <span class="keyword">string</span> = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// KeyWords 存放关键字</span></span><br><span class="line"><span class="keyword">var</span> KeyWords <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> sleepTime <span class="keyword">int</span> = <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">screen</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> wg.Done()</span><br><span class="line">	fmt.Println(<span class="string">&quot;线程开启！&quot;</span>)</span><br><span class="line">	fmt.Println(<span class="string">&quot;开始抓取关键字......&quot;</span>)</span><br><span class="line">	<span class="comment">// create context</span></span><br><span class="line">	ctx, cancel := chromedp.NewContext(context.Background())</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// run</span></span><br><span class="line">	<span class="keyword">var</span> res <span class="keyword">string</span></span><br><span class="line">	<span class="keyword">var</span> b1, b2 []<span class="keyword">byte</span></span><br><span class="line">	<span class="keyword">var</span> highLight <span class="keyword">string</span> = <span class="string">`var ele = document.getElementsByTagName(&quot;body&quot;)[0];</span></span><br><span class="line"><span class="string">	var keys = &quot;`</span> + KeyWords + <span class="string">`&quot;;</span></span><br><span class="line"><span class="string">	var reg = new RegExp(&quot;(&quot; + keys.replace(/,/, &quot;|&quot;) + &quot;)&quot;, &quot;g&quot;);</span></span><br><span class="line"><span class="string">	ele.innerHTML = ele.innerHTML.replace(reg, &quot;&lt;span style=&#x27;background:red;&#x27;&gt;&lt;font color=&#x27;#fff&#x27;&gt;$1&lt;/font&gt;&lt;/span&gt;&quot;);`</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`)</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> targetURL := &lt;-targetChan:</span><br><span class="line">			imgName := &lt;-imgNameChan</span><br><span class="line">			fmt.Println(<span class="string">&quot;正在抓取:&quot;</span>+targetURL, imgName)</span><br><span class="line">			err := chromedp.Run(ctx,</span><br><span class="line">				<span class="comment">// emulate iPhone 7 landscape</span></span><br><span class="line">				chromedp.Emulate(device.IPad),</span><br><span class="line">				chromedp.Navigate(targetURL),</span><br><span class="line">				chromedp.Sleep(time.Second*time.Duration(sleepTime)),</span><br><span class="line">				chromedp.EvaluateAsDevTools(highLight, &amp;res),</span><br><span class="line">				chromedp.CaptureScreenshot(&amp;b1),</span><br><span class="line"></span><br><span class="line">				<span class="comment">// reset</span></span><br><span class="line">				chromedp.Emulate(device.Reset),</span><br><span class="line"></span><br><span class="line">				<span class="comment">// set really large viewport</span></span><br><span class="line"></span><br><span class="line">				chromedp.EmulateViewport(<span class="number">1920</span>, <span class="number">2000</span>),</span><br><span class="line">				chromedp.Navigate(targetURL),</span><br><span class="line">				chromedp.Sleep(time.Second*time.Duration(sleepTime)),</span><br><span class="line">				chromedp.EvaluateAsDevTools(highLight, &amp;res),</span><br><span class="line">				chromedp.CaptureScreenshot(&amp;b2),</span><br><span class="line">			)</span><br><span class="line">			mu.Lock()</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				errorHTTPHandle, _ := os.OpenFile(<span class="string">&quot;errorHTTP.txt&quot;</span>, os.O_CREATE|os.O_APPEND|os.O_RDWR, <span class="number">0777</span>)</span><br><span class="line">				io.WriteString(errorHTTPHandle, targetURL)</span><br><span class="line">				fmt.Println(targetURL + <span class="string">&quot;抓取失败！该地址保存在本程序同级目录下！&quot;</span>)</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			&#125;</span><br><span class="line">			mu.Unlock()</span><br><span class="line">			getwd, _ := os.Getwd()</span><br><span class="line">			filepath.Join(getwd, PCfolderName)</span><br><span class="line">			filepath.Join(getwd, PhonefolderName)</span><br><span class="line">			<span class="keyword">if</span> err := ioutil.WriteFile(PhonefolderName+<span class="string">&quot;/&quot;</span>+imgName+<span class="string">&quot;_Phone.png&quot;</span>, b1, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				log.Fatal(err)</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> err := ioutil.WriteFile(PCfolderName+<span class="string">&quot;/&quot;</span>+imgName+<span class="string">&quot;_PC.png&quot;</span>, b2, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				log.Fatal(err)</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="keyword">case</span> &lt;-time.After(time.Second * <span class="number">1</span>):</span><br><span class="line">			fmt.Println(<span class="string">&quot;线程退出！&quot;</span>)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">imageName</span><span class="params">(URLString <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	matchString := <span class="string">`[:\/\.\?+=]+`</span></span><br><span class="line">	re := regexp.MustCompile(matchString)</span><br><span class="line">	imageName := re.ReplaceAllString(URLString, <span class="string">&quot;&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> imageName</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeFolder</span><span class="params">()</span></span> &#123;</span><br><span class="line">	PCfolderName = time.Now().Format(<span class="string">&quot;20060102&quot;</span>) + <span class="string">&quot;_PC&quot;</span></span><br><span class="line">	PhonefolderName = time.Now().Format(<span class="string">&quot;20060102&quot;</span>) + <span class="string">&quot;_Phone&quot;</span></span><br><span class="line">	_, err := os.Stat(PCfolderName)</span><br><span class="line">	<span class="keyword">if</span> os.IsNotExist(err) &#123;</span><br><span class="line">		err := os.Mkdir(PCfolderName, <span class="number">0777</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	_, err = os.Stat(PhonefolderName)</span><br><span class="line">	<span class="keyword">if</span> os.IsNotExist(err) &#123;</span><br><span class="line">		err := os.Mkdir(PhonefolderName, <span class="number">0777</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通道生产者</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeData</span><span class="params">(fileName <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	xlsx, err := excelize.OpenFile(fileName)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	allValueSlice, err := xlsx.GetRows(<span class="string">&quot;Sheet1&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i, v := <span class="keyword">range</span> allValueSlice &#123;</span><br><span class="line">		<span class="keyword">if</span> i == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(v) &gt; <span class="number">0</span> &#123;</span><br><span class="line">			targetChan &lt;- v[<span class="number">2</span>]</span><br><span class="line">			imgNameChan &lt;- v[<span class="number">0</span>]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> threads <span class="keyword">int</span></span><br><span class="line">	fmt.Println(<span class="string">&quot;请输入要高亮的关键字(多个关键字用|分隔)：&quot;</span>)</span><br><span class="line">	fmt.Scanln(&amp;KeyWords)</span><br><span class="line">	fmt.Println(<span class="string">&quot;请将文件拖入(文件名中不能存在空格)：&quot;</span>)</span><br><span class="line">	fmt.Scanln(&amp;fileName)</span><br><span class="line">	fmt.Println(<span class="string">&quot;请设置线程数量(数字)：&quot;</span>)</span><br><span class="line">	fmt.Scanln(&amp;threads)</span><br><span class="line">	fmt.Println(<span class="string">&quot;请设置等待时间(数字)：&quot;</span>)</span><br><span class="line">	fmt.Scanln(&amp;sleepTime)</span><br><span class="line">	makeFolder()</span><br><span class="line">	wg.Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">go</span> makeData(fileName)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; threads; i++ &#123;</span><br><span class="line">		wg.Add(<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">go</span> screen()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	wg.Wait()</span><br><span class="line">	fmt.Println(<span class="string">&quot;抓取结束！截图保存在此程序同级目录下&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="坑点"><a href="#坑点" class="headerlink" title="坑点"></a>坑点</h2><h3 id="os-IsExist"><a href="#os-IsExist" class="headerlink" title="os.IsExist()"></a>os.IsExist()</h3><p>此函数不管文件是否存在都返回False……发现问题的时候我懵了，后来使用<code>os.IsNotExist()</code>函数解决了。</p>
+<p><img src="/images/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/1de88cf65aa9c5a0cf674f45462ce939.png" alt="IsExist"></p>
+<h3 id="针对切片类型的for-range循环取值问题"><a href="#针对切片类型的for-range循环取值问题" class="headerlink" title="针对切片类型的for range循环取值问题"></a>针对切片类型的for range循环取值问题</h3><h4 id="测试案例："><a href="#测试案例：" class="headerlink" title="测试案例："></a>测试案例：</h4><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/Luxurioust/excelize&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> fileName <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> targetChan <span class="keyword">chan</span> <span class="keyword">string</span> = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">var</span> fileNameChan <span class="keyword">chan</span> <span class="keyword">string</span> = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileName = <span class="string">`D:\go\src\code.dawei.com\网页截图\针对固定格式excel的截图\url2.xlsx`</span></span><br><span class="line">	openExcel()</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">openExcel</span><span class="params">()</span></span> &#123;</span><br><span class="line">	exl, err := excelize.OpenFile(fileName)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	row, err := exl.GetRows(<span class="string">&quot;Sheet1&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i, v := <span class="keyword">range</span> row &#123;</span><br><span class="line">		<span class="keyword">if</span> i == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(v[<span class="number">2</span>]) &gt; <span class="number">0</span> &#123;</span><br><span class="line">			fmt.Println(v[<span class="number">2</span>], v[<span class="number">0</span>])</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="报错下标超出"><a href="#报错下标超出" class="headerlink" title="报错下标超出"></a>报错下标超出</h4><p><img src="/images/golang%E5%AE%9E%E7%8E%B0%E6%89%B9%E9%87%8F%E7%BD%91%E9%A1%B5%E5%85%B3%E9%94%AE%E5%AD%97%E9%AB%98%E4%BA%AE%E6%88%AA%E5%9B%BE/87c3ae861a1b43fd82177fdea5bf22a8.png" alt="报错内容"></p>
+<p>后来经过测试发现：其实<code>v</code>在<code>range row</code>赋值时就会取出<code>nil</code>，那<code>nil[2]</code>肯定会报错，将<code>if len(v[2])</code>改成<code>if len(v)</code>进行判断就行了。</p>
+<p>至于为什么会在读取excel时取出nil，还是excel最初导出时的遗留问题，后面我在测试的excel下删除一行就不会取出nil列表了，<strong>单元测试还是要贴合实际啊</strong>，测试的时候自己的excel没问题，上线使用了别人的excel就发现问题了。</p>
+<blockquote>
+<p>Ps:其实我想到会取出<code>nil</code>了，所以进行了<code>len(nil[2])</code>的判断，但是没想到<code>nil[2]</code>会报错…..</p>
+</blockquote>
+<h3 id="通道问题"><a href="#通道问题" class="headerlink" title="通道问题"></a>通道问题</h3><h4 id="for-range遍历通道"><a href="#for-range遍历通道" class="headerlink" title="for range遍历通道"></a>for range遍历通道</h4><p>for range循环可以遍历通道，当通道Close后遍历结束，如果通道没有Close则报错deadlock。</p>
+<h4 id="select遍历通道"><a href="#select遍历通道" class="headerlink" title="select遍历通道"></a>select遍历通道</h4><p>select从已关闭通道中读取for 配合 select 同样可以遍历通道，但是即使通道已经关闭还是可以取出，string类型的通道则不断取出空string，int类型则不断取出0，并不会执行default中的内容。缩放复制select从未设置Close的通道中读取但是如果通道不关闭，则所有值取出后select阻塞，并不会默认执行default中的内容，需要设置超时跳出。</p>
+<h4 id="通道小结"><a href="#通道小结" class="headerlink" title="通道小结"></a>通道小结</h4><p>推荐使用<code>for range</code>循环遍历通道，通道一定记得关闭。</p>
+<p><code>select</code>主要用于设置通道超时关闭，比如：</p>
+<blockquote>
+<p>select{</p>
+<pre><code>case &lt;- chan:
+
+    ......
+
+case &lt;-time.After(time.Second*3):
+
+    fmt.Print(“通道超时关闭”)
+
+    return</code></pre>
+<p>}</p>
+</blockquote>
+<p><code>default</code>用的很少，一般都是同时生产同时消费，难免出现时间差，此时使用<code>default</code>判断就很容易导致通道还在使用，消费者就提前退出了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/04/CVE-2021-21972%20GO%E8%AF%AD%E8%A8%80%E7%BC%96%E5%86%99POC/" rel="prev" title="Golang POC编写 CVE-2021-21972(Vmware vcenter漏洞)">
+      <i class="fa fa-chevron-left"></i> Golang POC编写 CVE-2021-21972(Vmware vcenter漏洞)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-number">2.</span> <span class="nav-text">说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E5%85%B3%E6%BA%90%E7%A0%81"><span class="nav-number">2.1.</span> <span class="nav-text">有关源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="nav-number">2.2.</span> <span class="nav-text">使用说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#main-go"><span class="nav-number">3.1.</span> <span class="nav-text">main.go</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#targetFile-go"><span class="nav-number">3.2.</span> <span class="nav-text">targetFile.go</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BA%E5%AE%9AEXCEL%E6%A0%BC%E5%BC%8F%E7%9A%84%E5%B9%B6%E5%8F%91%E6%BA%90%E7%A0%81"><span class="nav-number">3.3.</span> <span class="nav-text">固定EXCEL格式的并发源码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%91%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">坑点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#os-IsExist"><span class="nav-number">4.1.</span> <span class="nav-text">os.IsExist()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E5%88%87%E7%89%87%E7%B1%BB%E5%9E%8B%E7%9A%84for-range%E5%BE%AA%E7%8E%AF%E5%8F%96%E5%80%BC%E9%97%AE%E9%A2%98"><span class="nav-number">4.2.</span> <span class="nav-text">针对切片类型的for range循环取值问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%A1%88%E4%BE%8B%EF%BC%9A"><span class="nav-number">4.2.1.</span> <span class="nav-text">测试案例：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E4%B8%8B%E6%A0%87%E8%B6%85%E5%87%BA"><span class="nav-number">4.2.2.</span> <span class="nav-text">报错下标超出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E9%81%93%E9%97%AE%E9%A2%98"><span class="nav-number">4.3.</span> <span class="nav-text">通道问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#for-range%E9%81%8D%E5%8E%86%E9%80%9A%E9%81%93"><span class="nav-number">4.3.1.</span> <span class="nav-text">for range遍历通道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#select%E9%81%8D%E5%8E%86%E9%80%9A%E9%81%93"><span class="nav-number">4.3.2.</span> <span class="nav-text">select遍历通道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E9%81%93%E5%B0%8F%E7%BB%93"><span class="nav-number">4.3.3.</span> <span class="nav-text">通道小结</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Zain</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zain</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : true,
+      appId      : 'uPvr4jDtmxXYGR5pwcF47FqD-gzGzoHsz',
+      appKey     : 'FeT5qnHxOkBRXFWx2GU1VDki',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
