@@ -529,13 +529,6 @@
   </url>
   
   <url>
-    <loc>https://byzain.github.io/tags/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98-%E5%90%8E%E6%B8%97%E9%80%8F-%E5%AE%89%E5%85%A8%E6%8A%80%E5%B7%A7/</loc>
-    <lastmod>2024-11-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://byzain.github.io/tags/%E6%94%B6%E8%97%8F/</loc>
     <lastmod>2024-11-04</lastmod>
     <changefreq>weekly</changefreq>
@@ -558,6 +551,20 @@
   
   <url>
     <loc>https://byzain.github.io/tags/%E6%9C%BA%E5%9C%BA/</loc>
+    <lastmod>2024-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://byzain.github.io/tags/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/</loc>
+    <lastmod>2024-11-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://byzain.github.io/tags/%E5%90%8E%E6%B8%97%E9%80%8F/</loc>
     <lastmod>2024-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
