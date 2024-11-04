@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"byzain.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"path":"search.xml","field":"post","content":true,"format":"html"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="部署hexo先安装nodejs，不然没法使用npm 12345678# 全局安装hexonpm install -g hexo-cli# 创建并初始化hexo文件夹hexo init &lt;文件夹&gt;# 进入创建好的目录cd &lt;文件夹&gt; # 使用npm安装相关依赖npm install">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hexo">
+<meta property="og:url" content="https://byzain.github.io/hexo/index.html">
+<meta property="og:site_name" content="Zain">
+<meta property="og:description" content="部署hexo先安装nodejs，不然没法使用npm 12345678# 全局安装hexonpm install -g hexo-cli# 创建并初始化hexo文件夹hexo init &lt;文件夹&gt;# 进入创建好的目录cd &lt;文件夹&gt; # 使用npm安装相关依赖npm install">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://byzain.github.io/hexo/f9a2b0874180edb1ecb354f0eb06a5d7.png">
+<meta property="og:image" content="https://byzain.github.io/hexo/d8d57fd41691882116b4d1c4e1d05e63.png">
+<meta property="og:image" content="https://byzain.github.io/hexo/3799ba45e23c5dc5ee41b6d140eb7065.png">
+<meta property="og:image" content="https://byzain.github.io/hexo/07f4897ad362840ac92ffb87a3886492.png">
+<meta property="og:image" content="https://byzain.github.io/hexo/80f59394723baa650e21c5d6ff888c0b.png">
+<meta property="article:published_time" content="2020-09-04T07:32:42.000Z">
+<meta property="article:modified_time" content="2024-11-04T12:07:15.154Z">
+<meta property="article:author" content="Zain">
+<meta property="article:tag" content="blog搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://byzain.github.io/hexo/f9a2b0874180edb1ecb354f0eb06a5d7.png">
+
+
+<link rel="canonical" href="https://byzain.github.io/hexo/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://byzain.github.io/hexo/","path":"hexo/","title":"hexo"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>hexo | Zain</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><script src="/js/cherrybg.js"></script>
+  <div class="headband"></div>
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Zain</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">斜杠青年</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2hexo"><span class="nav-number">1.</span> <span class="nav-text">部署hexo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%95%8C%E9%9D%A2%E7%BE%8E%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">界面美化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%92%8C%E5%AE%89%E8%A3%85%E4%B8%BB%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">配置和安装主题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%EF%BC%81"><span class="nav-number">2.2.</span> <span class="nav-text">注意！</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E4%B8%BB%E9%A2%98%E7%9A%84%E6%B7%B1%E5%BA%A6%E8%87%AA%E5%AE%9A%E4%B9%89-%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5"><span class="nav-number">2.3.</span> <span class="nav-text">对主题的深度自定义  友情链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E7%89%88%E6%9C%AC%E6%B7%BB%E5%8A%A0%E9%BC%A0%E6%A0%87%E7%89%B9%E6%95%88%E5%92%8C%E8%83%8C%E6%99%AF%E7%89%B9%E6%95%88"><span class="nav-number">2.4.</span> <span class="nav-text">新版本添加鼠标特效和背景特效</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E5%88%B0github%E4%B8%8A%E6%89%98%E7%AE%A1"><span class="nav-number">3.</span> <span class="nav-text">推到github上托管</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAgithub%E4%B8%AA%E4%BA%BA%E9%A6%96%E9%A1%B5%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">创建github个人首页：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEconfig%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">配置config文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E9%80%81"><span class="nav-number">3.3.</span> <span class="nav-text">推送</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E5%9B%BE%E7%89%87%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BA%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">关于图片无法显示问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%88%E5%A5%BD%E7%94%A8%E7%9A%84%E6%8F%92%E4%BB%B6"><span class="nav-number">5.</span> <span class="nav-text">很好用的插件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E5%8A%A0%E5%AF%86"><span class="nav-number">5.1.</span> <span class="nav-text">文章加密</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6"><span class="nav-number">5.1.1.</span> <span class="nav-text">安装插件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.1.2.</span> <span class="nav-text">全局设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AF%86%E7%A0%81"><span class="nav-number">5.1.3.</span> <span class="nav-text">自定义密码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E8%AE%BA%E6%8F%92%E4%BB%B6"><span class="nav-number">5.2.</span> <span class="nav-text">评论插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E5%86%8Cgithub-OAuth-application"><span class="nav-number">5.2.1.</span> <span class="nav-text">注册github OAuth application</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hexo%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="nav-number">6.</span> <span class="nav-text">hexo相关命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E7%AB%99%E6%BA%90%E7%A0%81%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D"><span class="nav-number">7.</span> <span class="nav-text">整站源码备份和恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD"><span class="nav-number">7.1.</span> <span class="nav-text">备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D"><span class="nav-number">7.2.</span> <span class="nav-text">恢复</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Zain</p>
+  <div class="site-description" itemprop="description">总有人正年轻</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ByZain" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/hexo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Zain">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zain">
+      <meta itemprop="description" content="总有人正年轻">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="hexo | Zain">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          hexo
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-04 15:32:42" itemprop="dateCreated datePublished" datetime="2020-09-04T15:32:42+08:00">2020-09-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-11-04 20:07:15" itemprop="dateModified" datetime="2024-11-04T20:07:15+08:00">2024-11-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%94%9F%E6%B4%BB/" itemprop="url" rel="index"><span itemprop="name">生活</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="部署hexo"><a href="#部署hexo" class="headerlink" title="部署hexo"></a>部署hexo</h2><p>先安装nodejs，不然没法使用npm</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 全局安装hexo</span><br><span class="line">npm install -g hexo-cli</span><br><span class="line"># 创建并初始化hexo文件夹</span><br><span class="line">hexo init &lt;文件夹&gt;</span><br><span class="line"># 进入创建好的目录</span><br><span class="line">cd &lt;文件夹&gt; </span><br><span class="line"># 使用npm安装相关依赖</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="界面美化"><a href="#界面美化" class="headerlink" title="界面美化"></a>界面美化</h2><h3 id="配置和安装主题"><a href="#配置和安装主题" class="headerlink" title="配置和安装主题"></a>配置和安装主题</h3><p>根据需求配置<code>_config.yml</code>文件，参考：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://hexo.io/docs/configuration">https://hexo.io/docs/configuration</a></p>
+</blockquote>
+<p>安装主题，我这里用的是<code>next</code>：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/next-theme/hexo-theme-next">https://github.com/next-theme/hexo-theme-next</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd hexo-site</span><br><span class="line">$ git clone https://github.com/next-theme/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>根据上面的链接配置完成后，可以使用<code>hexo server</code>命令启动本地服务，验证是否配置成功。</p>
+</blockquote>
+<h3 id="注意！"><a href="#注意！" class="headerlink" title="注意！"></a>注意！</h3><p>注意，如果安装了next主题，并且想修改相关配置，请将<code>blog\themes\next</code>目录中的<code>_config.yml</code>文件拷贝到blog根目录中，并重命名为<code>_config.next.yml</code>，然后修改<code>_config.next.yml</code>以自定义配置，这一点官方文档有说明，不然主题更新了，可能会导致配置文件被覆盖。</p>
+<h3 id="对主题的深度自定义-友情链接"><a href="#对主题的深度自定义-友情链接" class="headerlink" title="对主题的深度自定义  友情链接"></a>对主题的深度自定义  友情链接</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://kalialbert.github.io/article/107153072.html">https://kalialbert.github.io/article/107153072.html</a></p>
+</blockquote>
+<h3 id="新版本添加鼠标特效和背景特效"><a href="#新版本添加鼠标特效和背景特效" class="headerlink" title="新版本添加鼠标特效和背景特效"></a>新版本添加鼠标特效和背景特效</h3><blockquote>
+<p>将特效的js代码放入<code>themes\next\source\js</code>路径中，名字自定义，我这里加了一个背景和一个点击特效</p>
+<p><img src="/hexo/f9a2b0874180edb1ecb354f0eb06a5d7.png" alt="截图"></p>
+<p>然后去<code>themes\next\layout</code>下去修改layout.njk的配置，引入刚才添加的js：</p>
+<p><img src="/hexo/d8d57fd41691882116b4d1c4e1d05e63.png" alt="截图"></p>
+</blockquote>
+<h2 id="推到github上托管"><a href="#推到github上托管" class="headerlink" title="推到github上托管"></a>推到github上托管</h2><h3 id="创建github个人首页："><a href="#创建github个人首页：" class="headerlink" title="创建github个人首页："></a>创建github个人首页：</h3><p>在GitHub上创建个人仓库，仓库名称为&#96;&lt;你的github用户名&gt;.github.io</p>
+<h3 id="配置config文件"><a href="#配置config文件" class="headerlink" title="配置config文件"></a>配置config文件</h3><p>还是去你自己创建的文件夹中找到<code>_config.yml</code>文件，在文件的最后，加入 如下内容</p>
+<p>repo中是你刚才创建的仓库的git地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: git@github.com:ByZain/ByZain.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<h3 id="推送"><a href="#推送" class="headerlink" title="推送"></a>推送</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo g &amp; hexo d</span><br></pre></td></tr></table></figure>
+
+<h2 id="关于图片无法显示问题"><a href="#关于图片无法显示问题" class="headerlink" title="关于图片无法显示问题"></a>关于图片无法显示问题</h2><p>修改配置文件<code>_config.yml</code>中<code>post_asset_folder的</code>值为<code>true</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+
+<p>进入博客目录，安装插件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install https://github.com/CodeFalling/hexo-asset-image --save</span><br></pre></td></tr></table></figure>
+
+<p>配置完成，编写文章：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new &lt;title&gt;</span><br></pre></td></tr></table></figure>
+
+<p>此时会在<code>blog\source\_posts</code>下生成一个<code>&lt;title&gt;.md</code>文件以及<code>&lt;title&gt;</code>文件夹</p>
+<p>这时候只需要将图片放入文件夹中，md中不用加路径，直接引用即可</p>
+<p>post文件夹结构：</p>
+<p><img src="/hexo/3799ba45e23c5dc5ee41b6d140eb7065.png" alt="截图"></p>
+<p><img src="/hexo/07f4897ad362840ac92ffb87a3886492.png" alt="截图"></p>
+<p><img src="/hexo/80f59394723baa650e21c5d6ff888c0b.png" alt="截图"></p>
+<h2 id="很好用的插件"><a href="#很好用的插件" class="headerlink" title="很好用的插件"></a>很好用的插件</h2><h3 id="文章加密"><a href="#文章加密" class="headerlink" title="文章加密"></a>文章加密</h3><h4 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h4><p>进入blog目录执行命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save hexo-blog-encrypt</span><br></pre></td></tr></table></figure>
+
+<h4 id="全局设置"><a href="#全局设置" class="headerlink" title="全局设置"></a>全局设置</h4><p>设置hexo配置文件<code>_config.yml</code>，为文章设置同一的默认口令，直接追加到配置文件底部即可</p>
+<p>tag中声明了私有标签名，和文章的同一密码，当文章需要加密的时候，为文章添加<code>private</code>标签即可</p>
+<p>全局中可以声明多个密码和tag的组合，用来为不同类型的文章上锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Security</span><br><span class="line">encrypt: # hexo-blog-encrypt</span><br><span class="line">  silent: true</span><br><span class="line">  abstract: 这是一篇加密文章，需要密码才能继续阅读。</span><br><span class="line">  message: 当前文章暂不对外可见，请输入密码后查看！</span><br><span class="line">  tags:</span><br><span class="line">  - &#123;name: private, password: hello&#125;</span><br><span class="line">##- &#123;name: private2, password: passwd2&#125; </span><br><span class="line">  wrong_pass_message: 抱歉，您输入的密码错误，请检查后重新输入。</span><br><span class="line">  wrong_hash_message: 抱歉, 当前文章不能被校验, 不过您还是可以看看解密后的内容。</span><br></pre></td></tr></table></figure>
+
+<h4 id="自定义密码"><a href="#自定义密码" class="headerlink" title="自定义密码"></a>自定义密码</h4><p>如果文章不想使用全局设置的密码，也可以为其设置自定义密码覆盖掉全局的密码设置，直接在文章中添加<code>tag</code>即可，格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tags:</span><br><span class="line">- &#123;name: private, password: hello&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tags:</span><br><span class="line">    - private</span><br><span class="line">password: &quot;hello&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="评论插件"><a href="#评论插件" class="headerlink" title="评论插件"></a>评论插件</h3><p>评论插件用的是<code>gitalk</code>，next已经内置了，只需要配置参数即可。</p>
+<h4 id="注册github-OAuth-application"><a href="#注册github-OAuth-application" class="headerlink" title="注册github OAuth application"></a>注册github OAuth application</h4><p>访问<a target="_blank" rel="noopener" href="https://github.com/settings/applications/new">https://github.com/settings/applications/new</a> ，相关信息按以下方法填写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Application name： # 应用名称，随意填写即可</span><br><span class="line">Homepage URL： # 你的网站地址，如https://yourname.github.io</span><br><span class="line">Application description # 描述，随意填写即可</span><br><span class="line">Authorization callback URL：# 你的网站地址，如https://yourname.github.io</span><br></pre></td></tr></table></figure>
+
+<p>将NexT的<code>_config.yml</code>，拷贝到博客根目录，重命名为<code>_config.next.yml</code>然后再修改其内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gitalk:</span><br><span class="line">  enable: true # 此处改为true</span><br><span class="line">  github_id: yourname # 修改为的Github账户名，非邮箱地址</span><br><span class="line">  repo: yourname.github.io  # 修改为你的仓库名</span><br><span class="line">  client_id:  # 填入上一步中得到的Client ID</span><br><span class="line">  client_secret:  # 填入上一步中得到的Client Secret</span><br><span class="line">  admin_user: yourname # 修改为的Github账户名，非邮箱地址</span><br><span class="line">  proxy: https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token/</span><br><span class="line">  distraction_free_mode: false # 此处为false</span><br><span class="line">  # Gitalk&#x27;s display language depends on user&#x27;s browser or system environment</span><br><span class="line">  # If you want everyone visiting your site to see a uniform language, you can set a force language value</span><br><span class="line">  # Available values: en | es-ES | fr | ru | zh-CN | zh-TW</span><br><span class="line">  language: zh-CN #语言设为中文</span><br></pre></td></tr></table></figure>
+
+<h2 id="hexo相关命令"><a href="#hexo相关命令" class="headerlink" title="hexo相关命令"></a>hexo相关命令</h2><p>生成静态文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo generate # 可以缩写为 hexo g</span><br></pre></td></tr></table></figure>
+
+<p>部署网站</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo deploy # 可以简写为 hexo d</span><br></pre></td></tr></table></figure>
+
+<p>启动服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br><span class="line"># -p 指定端口</span><br><span class="line"># -s 只使用静态文件</span><br></pre></td></tr></table></figure>
+
+<p>清除缓存和已经生成的静态文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br></pre></td></tr></table></figure>
+
+<p>列出网站资料</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo list &lt;type&gt;</span><br></pre></td></tr></table></figure>
+
+<p>安全模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo --safe # 不载入插件和脚本</span><br></pre></td></tr></table></figure>
+
+<p>推荐使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo s</span><br></pre></td></tr></table></figure>
+<h2 id="整站源码备份和恢复"><a href="#整站源码备份和恢复" class="headerlink" title="整站源码备份和恢复"></a>整站源码备份和恢复</h2><h3 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h3><p>将整站源码上传至GitHub，记得删除主题目录下的<code>.git</code>文件，否则主题不会被上传，另外根目录下也有类似<code>.git</code>的文件会阻止部分源码上传，可以直接删除。</p>
+<h3 id="恢复"><a href="#恢复" class="headerlink" title="恢复"></a>恢复</h3><p>git拉取下来之后需要安装<code>hexo-deployer-git</code>，删除<code>.deploy_git</code>文件夹后即可正常部署，否则无法部署</p>
+<blockquote>
+<p>npm install hexo-deployer-git –save</p>
+</blockquote>
+<p>另外如果配置了站点地图，迁移的时候同样需要重新安装</p>
+<blockquote>
+<p>npm install hexo-generator-sitemap –save</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/blog%E6%90%AD%E5%BB%BA/" rel="tag"># blog搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/htaccess%E6%96%87%E4%BB%B6%E7%9A%84%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0/" rel="prev" title="htaccess文件的深入学习">
+                  <i class="fa fa-chevron-left"></i> htaccess文件的深入学习
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/cobaltstrike%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E8%A7%A3%E5%86%B3/" rel="next" title="cobaltstrike中文乱码解决">
+                  cobaltstrike中文乱码解决 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zain</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"ByZain","repo":"ByZain.github.io","client_id":"042f68014b224a5b5da6","client_secret":"20ef48532c59524b2b8e5a1922772f6d6b796ad6","admin_user":"ByZain","distraction_free_mode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token/","language":"zh-CN","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"dd9072e1156065f66e26ee5918ffd757"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+<script src="/js/clickboom.js"></script>
+</body>
+</html>

